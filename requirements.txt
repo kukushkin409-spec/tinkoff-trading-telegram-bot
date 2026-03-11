@@ -1,4 +1,4 @@
-tinkoff-invest-python
+git+https://github.com/Tinkoff/invest-python.git@main
 python-telegram-bot==20.7
 pandas==2.0.3
 numpy==1.24.3
