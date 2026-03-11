@@ -429,20 +429,15 @@ if __name__ == "__main__":
 
     bot = TradingBot()
 
-    # Запуск polling через updater напрямую — это решает проблему на серверах
-    updater = bot.application.updater
-    updater.start_polling(
-        allowed_updates=Update.ALL_TYPES,
-        drop_pending_updates=True,
-        bootstrap_retries=-1,
-        timeout=30,
-        read_timeout=30,
-        connect_timeout=30,
-        pool_timeout=30,
+    # Правильный запуск polling в v21+ на серверах
+    asyncio.run(
+        bot.application.run_polling(
+            allowed_updates=Update.ALL_TYPES,
+            drop_pending_updates=True,      # очистка старых сообщений
+            bootstrap_retries=-1,           # бесконечные попытки подключения
+            timeout=30,                     # таймауты
+            read_timeout=30,
+            connect_timeout=30,
+            pool_timeout=30,
+        )
     )
-
-    # Держим процесс живым (бесконечный цикл)
-    updater.idle()
-
-    # Если нужно остановить graceful (Ctrl+C)
-    updater.stop()
