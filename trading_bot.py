@@ -429,10 +429,20 @@ if __name__ == "__main__":
 
     bot = TradingBot()
 
-    # Это правильный способ запустить polling на серверах (Render, Linux и т.д.)
-    asyncio.run(bot.application.run_polling(
+    # Запуск polling через updater напрямую — это решает проблему на серверах
+    updater = bot.application.updater
+    updater.start_polling(
         allowed_updates=Update.ALL_TYPES,
-        drop_pending_updates=True,  # опционально: очистить очередь обновлений при старте
-        bootstrap_retries=-1,       # бесконечные попытки подключения
-    ))
+        drop_pending_updates=True,
+        bootstrap_retries=-1,
+        timeout=30,
+        read_timeout=30,
+        connect_timeout=30,
+        pool_timeout=30,
+    )
 
+    # Держим процесс живым (бесконечный цикл)
+    updater.idle()
+
+    # Если нужно остановить graceful (Ctrl+C)
+    updater.stop()
