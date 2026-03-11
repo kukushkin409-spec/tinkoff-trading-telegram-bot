@@ -423,6 +423,28 @@ class TradingBot:
         logger.info("🚀 Бот V3.3 запущен!")
         self.application.run_polling(allowed_updates=Update.ALL_TYPES)
 
+# Защита от двойного polling (если Render запустил несколько)
+from telegram.error import Conflict
+
+# В методе run добавь try-except
+async def run(self):
+    try:
+        await self.application.run_polling(
+            allowed_updates=Update.ALL_TYPES,
+            drop_pending_updates=True,
+            bootstrap_retries=-1,
+            timeout=30,
+            read_timeout=30,
+            connect_timeout=30,
+            pool_timeout=30,
+        )
+    except Conflict as e:
+        logger.error("Конфликт polling: другой экземпляр уже запущен. Останавливаю этот.")
+        await self.application.stop()
+        raise
+    except Exception as e:
+        logger.error(f"Ошибка polling: {e}")
+        await self.application.stop()
 
 if __name__ == "__main__":
     import asyncio
@@ -450,3 +472,4 @@ if __name__ == "__main__":
     finally:
         loop.run_until_complete(bot.application.stop())
         loop.close()
+
