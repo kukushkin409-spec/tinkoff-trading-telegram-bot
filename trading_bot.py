@@ -427,12 +427,12 @@ class TradingBot:
 if __name__ == "__main__":
     import asyncio
 
-    # Для Windows (локально) — не обязательно на Render, но оставляем
-    if sys.platform == "win32":
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
     bot = TradingBot()
 
-    # Запускаем polling через asyncio.run — это решает ошибку на серверах
-    asyncio.run(bot.application.run_polling(allowed_updates=Update.ALL_TYPES))
+    # Это правильный способ запустить polling на серверах (Render, Linux и т.д.)
+    asyncio.run(bot.application.run_polling(
+        allowed_updates=Update.ALL_TYPES,
+        drop_pending_updates=True,  # опционально: очистить очередь обновлений при старте
+        bootstrap_retries=-1,       # бесконечные попытки подключения
+    ))
 
