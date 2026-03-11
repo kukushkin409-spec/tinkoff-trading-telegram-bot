@@ -429,13 +429,13 @@ if __name__ == "__main__":
 
     bot = TradingBot()
 
-    # Правильный запуск polling в v21+ на серверах
+    # Запуск polling в v21+ на серверах (Render, Linux и т.д.)
     asyncio.run(
         bot.application.run_polling(
             allowed_updates=Update.ALL_TYPES,
-            drop_pending_updates=True,      # очистка старых сообщений
-            bootstrap_retries=-1,           # бесконечные попытки подключения
-            timeout=30,                     # таймауты
+            drop_pending_updates=True,      # очищает очередь старых сообщений
+            bootstrap_retries=-1,           # бесконечные попытки подключения к Telegram
+            timeout=30,
             read_timeout=30,
             connect_timeout=30,
             pool_timeout=30,
