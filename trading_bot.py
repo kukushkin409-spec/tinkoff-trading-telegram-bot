@@ -429,7 +429,7 @@ if __name__ == "__main__":
 
     bot = TradingBot()
 
-    # Создаём loop явно перед запуском polling
+    # Явно создаём и устанавливаем event loop — это решает проблему на серверах
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
@@ -437,13 +437,16 @@ if __name__ == "__main__":
         loop.run_until_complete(
             bot.application.run_polling(
                 allowed_updates=Update.ALL_TYPES,
-                drop_pending_updates=True,
-                bootstrap_retries=-1,
+                drop_pending_updates=True,      # очищает очередь старых сообщений при старте
+                bootstrap_retries=-1,           # бесконечные попытки подключения к Telegram
                 timeout=30,
                 read_timeout=30,
                 connect_timeout=30,
                 pool_timeout=30,
             )
         )
+    except KeyboardInterrupt:
+        pass
     finally:
+        loop.run_until_complete(bot.application.stop())
         loop.close()
